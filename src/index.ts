@@ -10,6 +10,8 @@ import { createConnection } from "typeorm";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { BookResolver } from "./resolvers/BookResolver";
+import { CopyResolver } from "./resolvers/CopyResolver";
+import { CheckOutResolver } from "./resolvers/CheckOutResolver";
 
 const PORT = 4000;
 
@@ -29,7 +31,13 @@ const main = async () => {
     "/",
     graphqlHTTP({
       schema: await buildSchema({
-        resolvers: [HelloResolver, UserResolver, BookResolver],
+        resolvers: [
+          HelloResolver,
+          UserResolver,
+          BookResolver,
+          CopyResolver,
+          CheckOutResolver,
+        ],
         dateScalarMode: "timestamp",
       }),
       graphiql: true,

@@ -1,19 +1,19 @@
+import { CheckOut } from "../entities/CheckOut";
 import { ArgsType, Field, InputType, ObjectType } from "type-graphql";
-import { Book } from "../entities/Book";
 import ConnectionArgs from "./ConnectionArgs";
 import RelayTypes from "./RelayTypes";
 
 @ObjectType()
-export class PaginatedBooks extends RelayTypes<Book>(Book) {}
+export class PaginatedCheckOuts extends RelayTypes<CheckOut>(CheckOut) {}
 
 @InputType()
-export default class BooksFilterInput {
+export default class CheckOutsFilterInput {
   @Field({ nullable: true })
   searchTerm?: string;
 }
 
 @ArgsType()
-export class BooksConnectionArgs extends ConnectionArgs {
+export class CheckOutsConnectionArgs extends ConnectionArgs {
   @Field({ nullable: true })
-  filter?: BooksFilterInput;
+  filter?: CheckOutsFilterInput;
 }

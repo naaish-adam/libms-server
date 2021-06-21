@@ -1,19 +1,19 @@
+import { Copy } from "../entities/Copy";
 import { ArgsType, Field, InputType, ObjectType } from "type-graphql";
-import { Book } from "../entities/Book";
 import ConnectionArgs from "./ConnectionArgs";
 import RelayTypes from "./RelayTypes";
 
 @ObjectType()
-export class PaginatedBooks extends RelayTypes<Book>(Book) {}
+export class PaginatedCopies extends RelayTypes<Copy>(Copy) {}
 
 @InputType()
-export default class BooksFilterInput {
+export default class CopiesFilterInput {
   @Field({ nullable: true })
   searchTerm?: string;
 }
 
 @ArgsType()
-export class BooksConnectionArgs extends ConnectionArgs {
+export class CopiesConnectionArgs extends ConnectionArgs {
   @Field({ nullable: true })
-  filter?: BooksFilterInput;
+  filter?: CopiesFilterInput;
 }

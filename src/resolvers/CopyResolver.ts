@@ -1,39 +1,13 @@
-import { Book } from "../entities/Book";
-import {
-  Arg,
-  Args,
-  Field,
-  InputType,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Copy } from "../entities/Copy";
 import { connectionFromArraySlice } from "../pagination/ConnectionArgs";
-import { BooksConnectionArgs, PaginatedBooks } from "../pagination/Books";
+import { CopiesConnectionArgs, PaginatedCopies } from "../pagination/Copies";
+import { Args, Query, Resolver } from "type-graphql";
 import { ILike } from "typeorm";
 
-@InputType()
-class BookInput {
-  @Field({ nullable: true })
-  isbn: number;
-
-  @Field()
-  name: string;
-
-  @Field()
-  author: string;
-
-  @Field()
-  publishedDate: Date;
-
-  @Field({ nullable: true })
-  cover: string;
-}
-
 @Resolver()
-export class BookResolver {
-  @Query(() => PaginatedBooks)
-  async books(@Args() args: BooksConnectionArgs): Promise<PaginatedBooks> {
+export class CopyResolver {
+  @Query(() => PaginatedCopies)
+  async copies(@Args() args: CopiesConnectionArgs): Promise<PaginatedCopies> {
     const { limit, offset } = args.pagingParams();
     const { filter } = args;
 
@@ -55,7 +29,7 @@ export class BookResolver {
         ]
       : undefined;
 
-    const [bookList, count] = await Book.findAndCount({
+    const [bookList, count] = await Copy.findAndCount({
       skip: offset,
       take: realLimitPlusOne,
       where,
@@ -80,13 +54,8 @@ export class BookResolver {
     };
   }
 
-  @Query(() => Book)
-  async book(@Arg("id") id: number) {
-    return await Book.findOne(id);
-  }
-
-  @Mutation(() => Book)
-  async addBook(@Arg("bookInput") bookInput: BookInput) {
-    return await Book.create(bookInput).save();
+  @Query(() => String)
+  copy() {
+    return "hello world";
   }
 }

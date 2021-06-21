@@ -1,39 +1,18 @@
-import { Book } from "../entities/Book";
+import { CheckOut } from "../entities/CheckOut";
 import {
-  Arg,
-  Args,
-  Field,
-  InputType,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+  CheckOutsConnectionArgs,
+  PaginatedCheckOuts,
+} from "../pagination/CheckOuts";
 import { connectionFromArraySlice } from "../pagination/ConnectionArgs";
-import { BooksConnectionArgs, PaginatedBooks } from "../pagination/Books";
+import { Args, Query, Resolver } from "type-graphql";
 import { ILike } from "typeorm";
 
-@InputType()
-class BookInput {
-  @Field({ nullable: true })
-  isbn: number;
-
-  @Field()
-  name: string;
-
-  @Field()
-  author: string;
-
-  @Field()
-  publishedDate: Date;
-
-  @Field({ nullable: true })
-  cover: string;
-}
-
 @Resolver()
-export class BookResolver {
-  @Query(() => PaginatedBooks)
-  async books(@Args() args: BooksConnectionArgs): Promise<PaginatedBooks> {
+export class CheckOutResolver {
+  @Query(() => PaginatedCheckOuts)
+  async checkOuts(
+    @Args() args: CheckOutsConnectionArgs
+  ): Promise<PaginatedCheckOuts> {
     const { limit, offset } = args.pagingParams();
     const { filter } = args;
 
@@ -55,7 +34,7 @@ export class BookResolver {
         ]
       : undefined;
 
-    const [bookList, count] = await Book.findAndCount({
+    const [bookList, count] = await CheckOut.findAndCount({
       skip: offset,
       take: realLimitPlusOne,
       where,
@@ -80,13 +59,8 @@ export class BookResolver {
     };
   }
 
-  @Query(() => Book)
-  async book(@Arg("id") id: number) {
-    return await Book.findOne(id);
-  }
-
-  @Mutation(() => Book)
-  async addBook(@Arg("bookInput") bookInput: BookInput) {
-    return await Book.create(bookInput).save();
+  @Query(() => String)
+  checkOut() {
+    return "hello world";
   }
 }
