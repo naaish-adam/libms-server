@@ -1,5 +1,6 @@
 import { Field, ObjectType, registerEnumType } from "type-graphql";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
+import { CheckOut } from "./CheckOut";
 import { Common } from "./Common";
 
 export enum UserRole {
@@ -25,4 +26,7 @@ export class User extends Common {
   @Field(() => UserRole)
   @Column()
   role: UserRole;
+
+  @OneToMany(() => CheckOut, (checkOut) => checkOut.borrower)
+  checkOut: CheckOut[];
 }

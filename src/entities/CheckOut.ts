@@ -1,5 +1,5 @@
-import { ObjectType } from "type-graphql";
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { Common } from "./Common";
 import { Copy } from "./Copy";
 import { User } from "./User";
@@ -7,14 +7,20 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class CheckOut extends Common {
-  @OneToOne(() => User)
-  @JoinColumn()
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.id)
   borrower: User;
 
+  @Field(() => Copy)
   @OneToOne(() => Copy)
   @JoinColumn()
   copy: Copy;
 
+  @Field()
+  @Column({ default: false })
+  returned: boolean = false;
+
+  @Field(() => Date)
   @Column()
   dueAt: Date;
 }

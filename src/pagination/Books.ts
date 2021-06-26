@@ -10,6 +10,9 @@ export class PaginatedBooks extends RelayTypes<Book>(Book) {}
 export default class BooksFilterInput {
   @Field({ nullable: true })
   searchTerm?: string;
+
+  @Field({ nullable: true })
+  onlyAvailable?: boolean;
 }
 
 @ArgsType()

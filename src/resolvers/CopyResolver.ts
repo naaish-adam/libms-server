@@ -1,10 +1,39 @@
-import { Copy } from "../entities/Copy";
+import { Copy, CopyStatus } from "../entities/Copy";
 import { connectionFromArraySlice } from "../pagination/ConnectionArgs";
 import { CopiesConnectionArgs, PaginatedCopies } from "../pagination/Copies";
-import { Args, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { ILike } from "typeorm";
+import { Book } from "../entities/Book";
+import { BaseResponse } from "../abstract/BaseResponse";
 
-@Resolver()
+@InputType()
+class CopyInput {
+  @Field()
+  rackNo: string;
+
+  @Field(() => CopyStatus)
+  status: CopyStatus;
+
+  @Field(() => Int)
+  bookId: number;
+}
+
+@ObjectType()
+class CopyResponse extends BaseResponse {
+  @Field()
+  copy?: Copy;
+}
+@Resolver(Copy)
 export class CopyResolver {
   @Query(() => PaginatedCopies)
   async copies(@Args() args: CopiesConnectionArgs): Promise<PaginatedCopies> {
@@ -54,8 +83,21 @@ export class CopyResolver {
     };
   }
 
-  @Query(() => String)
-  copy() {
-    return "hello world";
+  @Query(() => Copy)
+  async copy(@Arg("id", () => Int) id: number) {
+    return await Copy.findOne(id);
+  }
+
+  @Mutation(() => CopyResponse)
+  async addCopy(@Arg("copyInput") copyInput: CopyInput): Promise<CopyResponse> {
+    const book = await Book.findOne(copyInput.bookId);
+
+    if (!book) {
+      return {
+        error: "A book with that id doesn't exist",
+      };
+    }
+
+    return { copy: await Copy.create({ ...copyInput, book }).save() };
   }
 }

@@ -25,6 +25,7 @@ export class Copy extends Common {
   @Column()
   status: CopyStatus;
 
-  @ManyToOne(() => Book, (book) => book.id)
+  @Field(() => Book)
+  @ManyToOne(() => Book, (book) => book.id, { onDelete: "CASCADE" })
   book: Book;
 }

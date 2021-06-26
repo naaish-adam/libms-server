@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Common } from "./Common";
 import { Copy } from "./Copy";
@@ -6,9 +6,9 @@ import { Copy } from "./Copy";
 @ObjectType()
 @Entity()
 export class Book extends Common {
-  @Field(() => Int, { nullable: true })
-  @Column({ nullable: true })
-  isbn: number;
+  @Field({ nullable: true })
+  @Column({ nullable: true, length: 13 })
+  isbn: string;
 
   @Field()
   @Column()

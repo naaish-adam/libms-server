@@ -10,10 +10,13 @@ export class PaginatedCheckOuts extends RelayTypes<CheckOut>(CheckOut) {}
 export default class CheckOutsFilterInput {
   @Field({ nullable: true })
   searchTerm?: string;
+
+  @Field()
+  returned: boolean;
 }
 
 @ArgsType()
 export class CheckOutsConnectionArgs extends ConnectionArgs {
-  @Field({ nullable: true })
-  filter?: CheckOutsFilterInput;
+  @Field()
+  filter: CheckOutsFilterInput;
 }
