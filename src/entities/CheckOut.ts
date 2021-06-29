@@ -8,7 +8,7 @@ import { User } from "./User";
 @Entity()
 export class CheckOut extends Common {
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.checkOuts)
   borrower: User;
 
   @Field(() => Copy)

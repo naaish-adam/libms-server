@@ -2,6 +2,7 @@ import { Field, ObjectType, registerEnumType } from "type-graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { CheckOut } from "./CheckOut";
 import { Common } from "./Common";
+import { Reserve } from "./Reserve";
 
 export enum UserRole {
   LIBRARIAN = "librarian",
@@ -28,5 +29,8 @@ export class User extends Common {
   role: UserRole;
 
   @OneToMany(() => CheckOut, (checkOut) => checkOut.borrower)
-  checkOut: CheckOut[];
+  checkOuts: CheckOut[];
+
+  @OneToMany(() => Reserve, (reserve) => reserve.reserver)
+  reserves: Reserve[];
 }

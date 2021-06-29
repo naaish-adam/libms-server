@@ -2,6 +2,7 @@ import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Common } from "./Common";
 import { Copy } from "./Copy";
+import { Reserve } from "./Reserve";
 
 @ObjectType()
 @Entity()
@@ -29,4 +30,7 @@ export class Book extends Common {
   @Field(() => [Copy])
   @OneToMany(() => Copy, (copy) => copy.book)
   copies: Copy[];
+
+  @OneToMany(() => Reserve, (reserve) => reserve.book)
+  reserves: Reserve[];
 }
