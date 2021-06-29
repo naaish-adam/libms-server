@@ -12,6 +12,7 @@ import { UserResolver } from "./resolvers/UserResolver";
 import { BookResolver } from "./resolvers/BookResolver";
 import { CopyResolver } from "./resolvers/CopyResolver";
 import { CheckOutResolver } from "./resolvers/CheckOutResolver";
+import { ReserveResolver } from "./resolvers/ReserveResolver";
 
 const PORT = 4000;
 
@@ -37,6 +38,7 @@ const main = async () => {
           BookResolver,
           CopyResolver,
           CheckOutResolver,
+          ReserveResolver,
         ],
         dateScalarMode: "timestamp",
       }),
