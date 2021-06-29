@@ -6,14 +6,14 @@ import {
   Arg,
   Args,
   Field,
-  FieldResolver,
+  // FieldResolver,
   InputType,
   Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
-  Root,
+  // Root,
 } from "type-graphql";
 import { Reserve } from "../entities/Reserve";
 import { connectionFromArraySlice } from "../pagination/ConnectionArgs";
@@ -41,15 +41,15 @@ class ReserveBookResponse {
 
 @Resolver(Reserve)
 export class ReserveResolver {
-  @FieldResolver()
-  async book(@Root() reserve: Reserve) {
-    return await Book.findOne(reserve.book);
-  }
+  // @FieldResolver()
+  // async book(@Root() reserve: Reserve) {
+  //   return await Book.findOne(reserve.book);
+  // }
 
-  @FieldResolver()
-  async reserver(@Root() reserve: Reserve) {
-    return await User.findOne(reserve.reserver);
-  }
+  // @FieldResolver()
+  // async reserver(@Root() reserve: Reserve) {
+  //   return await User.findOne(reserve.reserver);
+  // }
 
   @Query(() => PaginatedReserves)
   async reserves(
@@ -72,6 +72,7 @@ export class ReserveResolver {
         active: filter.active,
         reserver: { id: filter.userId },
       },
+      relations: ["book", "reserver"],
     });
 
     const { edges, pageInfo } = connectionFromArraySlice(
@@ -97,7 +98,21 @@ export class ReserveResolver {
   async reserveBook(
     @Arg("reserveBookInput")
     reserveBookInput: ReserveBookInput
-  ) {
+  ): Promise<ReserveBookResponse> {
+    // Check if book already reserved
+    const reserved = await Reserve.findOne({
+      where: {
+        book: { id: reserveBookInput.bookId },
+        reserver: { id: reserveBookInput.reserverId },
+      },
+    });
+
+    if (reserved) {
+      return {
+        error: `You already have the book reserved. Queue position ${reserved.position}.`,
+      };
+    }
+
     // Get all copies of the book
     const copies = await Copy.find({
       where: {
@@ -140,13 +155,14 @@ export class ReserveResolver {
       order: { createdAt: "DESC" },
     });
 
+    const book = await Book.findOne(reserveBookInput.bookId);
+    console.log(book);
+
     const newReserve = new Reserve();
     newReserve.reserver = (await User.findOne(
       reserveBookInput.reserverId
     )) as User;
-    newReserve.book = await copies.find(
-      (copy) => copy.status !== CopyStatus.AVAILABLE
-    )!.book;
+    newReserve.book = book as Book;
     newReserve.active = true;
     newReserve.position = latestReserve ? latestReserve.position + 1 : 1;
 

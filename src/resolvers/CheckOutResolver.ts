@@ -15,7 +15,12 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { EntityManager, Transaction, TransactionManager } from "typeorm";
+import {
+  EntityManager,
+  getConnection,
+  Transaction,
+  TransactionManager,
+} from "typeorm";
 import { Copy, CopyStatus } from "../entities/Copy";
 import { addDays } from "../utils/helpers";
 import { User } from "../entities/User";
@@ -84,8 +89,20 @@ export class CheckOutResolver {
   }
 
   @Mutation(() => Boolean)
-  async returnBook(@Arg("id", () => Int) id: number) {
-    await CheckOut.update(id, { returned: true });
+  @Transaction()
+  async returnBook(
+    @TransactionManager() manager: EntityManager,
+    @Arg("id", () => Int) id: number
+  ) {
+    const checkOut = await CheckOut.findOne(id, { relations: ["copy"] });
+
+    if (!checkOut) {
+      return false;
+    }
+
+    manager.update(Copy, checkOut.copy.id, { status: CopyStatus.AVAILABLE });
+    manager.update(CheckOut, id, { returned: true });
+
     return true;
   }
 
@@ -97,6 +114,22 @@ export class CheckOutResolver {
     checkOutBookInput: CheckOutBookInput
   ): Promise<CheckOutBookResponse> {
     const { bookId, borrowerId } = checkOutBookInput;
+
+    // check if a copy of the book already checked out
+    const checkOut = await getConnection()
+      .createQueryBuilder(CheckOut, "checkOut")
+      .leftJoinAndSelect("checkOut.copy", "copy")
+      .leftJoinAndSelect("copy.book", "book")
+      .where("checkOut.borrowerId = :borrowerId", { borrowerId })
+      .andWhere("book.id = :bookId", { bookId })
+      .andWhere("checkOut.returned = :returned", { returned: false })
+      .getOne();
+
+    if (checkOut) {
+      return {
+        error: "You already have a copy of this book borrowed.",
+      };
+    }
 
     const borrower = await User.findOne(borrowerId);
 

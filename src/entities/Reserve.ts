@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from "type-graphql";
 import { Column, Entity, ManyToOne } from "typeorm";
 import { Book } from "./Book";
-import { Common } from "./Common";
+import { Common } from "../abstract/Common";
 import { User } from "./User";
 
 @ObjectType()

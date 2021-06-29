@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from "type-graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { CheckOut } from "./CheckOut";
-import { Common } from "./Common";
+import { Common } from "../abstract/Common";
 import { Reserve } from "./Reserve";
 
 export enum UserRole {

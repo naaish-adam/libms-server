@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
-import { Common } from "./Common";
+import { Common } from "../abstract/Common";
 import { Copy } from "./Copy";
 import { User } from "./User";
 

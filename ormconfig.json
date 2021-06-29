@@ -2,7 +2,7 @@
     "type": "sqlite",
     "database": "app.db",
     "synchronize": true,
-    "logging": true,
+    "logging": false,
     "entities": [
        "dist/entities/**/*.js"
     ]
