@@ -13,6 +13,9 @@ export default class CheckOutsFilterInput {
 
   @Field()
   returned: boolean;
+
+  @Field({ nullable: true })
+  userId?: number;
 }
 
 @ArgsType()

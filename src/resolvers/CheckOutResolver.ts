@@ -56,6 +56,7 @@ export class CheckOutResolver {
       take: realLimitPlusOne,
       where: {
         returned: filter.returned,
+        borrower: { id: filter?.userId },
       },
       order: {
         createdAt: "DESC",
