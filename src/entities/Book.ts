@@ -12,12 +12,16 @@ export class Book extends Common {
   isbn: string;
 
   @Field()
-  @Column()
+  @Column({ length: 512 })
   name: string;
 
   @Field()
-  @Column()
+  @Column({ length: 128 })
   author: string;
+
+  @Field()
+  @Column({ length: 128 })
+  category: string;
 
   @Field()
   @Column()

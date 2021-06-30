@@ -30,6 +30,9 @@ class BookInput {
   name!: string;
 
   @Field()
+  category!: string;
+
+  @Field()
   author!: string;
 
   @Field()
@@ -60,12 +63,30 @@ export class BookResolver {
       .leftJoinAndSelect("book.copies", "copy");
 
     if (filter?.searchTerm) {
+      let year = null;
+
+      try {
+        if (filter.searchTerm.length === 4) {
+          year = parseInt(filter.searchTerm);
+        }
+      } catch (error) {}
+
       query
-        .where("book.name like :name", { name: `%${filter.searchTerm}%` })
-        .orWhere("book.author like :author", {
+        .where("book.name LIKE :name", { name: `%${filter.searchTerm}%` })
+        .orWhere("book.author LIKE :author", {
           author: `%${filter.searchTerm}%`,
         })
-        .orWhere("book.isbn like :isbn", { isbn: `%${filter.searchTerm}%` });
+        .orWhere("book.isbn LIKE :isbn", { isbn: `%${filter.searchTerm}%` })
+        .orWhere("book.category LIKE :category", {
+          category: `%${filter.searchTerm}%`,
+        });
+
+      if (year) {
+        query.orWhere("book.publishedDate BETWEEN :startDate AND :endDate", {
+          startDate: `${year}-01-01`,
+          endDate: `${year}-12-31`,
+        });
+      }
     }
 
     if (filter?.onlyAvailable) {
@@ -77,27 +98,6 @@ export class BookResolver {
       .take(realLimitPlusOne)
       .orderBy("book.createdAt", "DESC")
       .getManyAndCount();
-
-    // const where = filter?.searchTerm
-    // ? [
-    //     {
-    //       name: ILike(`%${filter.searchTerm}%`),
-    //     },
-    //     {
-    //       author: ILike(`%${filter.searchTerm}%`),
-    //     },
-    //     {
-    //       isbn: ILike(`%${filter.searchTerm}%`),
-    //     },
-    //   ]
-    // : undefined;
-
-    // const [bookList, count] = await Book.findAndCount({
-    //   skip: offset,
-    //   take: realLimitPlusOne,
-    //   where,
-    //   order: { createdAt: "DESC" },
-    // });
 
     const { edges, pageInfo } = connectionFromArraySlice(
       bookList.slice(0, realLimit),
