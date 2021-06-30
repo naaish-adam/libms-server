@@ -56,13 +56,18 @@ export class CheckOutResolver {
     const realLimit = Math.min(50, limit || 50);
     const realLimitPlusOne = realLimit + 1;
 
+    let where: any = {
+      returned: filter.returned,
+    };
+
+    if (filter.userId) {
+      where = { ...where, borrower: { id: filter.userId } };
+    }
+
     const [bookList, count] = await CheckOut.findAndCount({
       skip: offset,
       take: realLimitPlusOne,
-      where: {
-        returned: filter.returned,
-        borrower: { id: filter?.userId },
-      },
+      where,
       order: {
         createdAt: "DESC",
       },
