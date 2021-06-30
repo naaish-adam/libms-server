@@ -1,7 +1,8 @@
 import { Field, ObjectType, registerEnumType } from "type-graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { Book } from "./Book";
 import { Common } from "../abstract/Common";
+import { CheckOut } from "./CheckOut";
 
 export enum CopyStatus {
   AVAILABLE = "Available",
@@ -28,4 +29,7 @@ export class Copy extends Common {
   @Field(() => Book)
   @ManyToOne(() => Book, (book) => book.id, { onDelete: "CASCADE" })
   book: Book;
+
+  @OneToMany(() => CheckOut, (checkOut) => checkOut.copy)
+  checkOuts: CheckOut[];
 }

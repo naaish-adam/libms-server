@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { Common } from "../abstract/Common";
 import { Copy } from "./Copy";
 import { User } from "./User";
@@ -12,8 +12,7 @@ export class CheckOut extends Common {
   borrower: User;
 
   @Field(() => Copy)
-  @OneToOne(() => Copy)
-  @JoinColumn()
+  @ManyToOne(() => Copy, (copy) => copy.checkOuts)
   copy: Copy;
 
   @Field()
